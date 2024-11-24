@@ -1,23 +1,27 @@
 steps:
-  # Docker Build
+  # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t',
-           'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage',
-           '.']
+    args: [
+      'build', '-t',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage',
+      '.'
+    ]
 
-  # Docker Push
+  # Step 2: Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',
-           'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage']
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage'
+    ]
 
-  # Entrypoint, timeout and environment variables
+  # Step 3: Deploy the Docker image to a Compute Engine VM
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
-    timeout: 240s
-    args: ['compute', 'instances',
-           'create-with-container', 'my-vm-name',
-           '--container-image',
-           'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage']
+    args: [
+      'compute', 'instances', 'create-with-container', 'my-vm-name',
+      '--container-image',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage'
+    ]
     env:
       - 'CLOUDSDK_COMPUTE_REGION=us-central1'
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'

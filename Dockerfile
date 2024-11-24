@@ -13,14 +13,14 @@ RUN apk add --no-cache \
 # Create necessary directories
 RUN mkdir -p /run/nginx /app
 
-# Copy only composer.json and composer.lock
-COPY src/composer.json src/composer.lock /app/
+# Copy application files
+COPY src/ /app/src/
 
 # Copy Nginx configuration
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 
-# Set the working directory to /app
-WORKDIR /app
+# Set the working directory to /app/src where composer.json is located
+WORKDIR /app/src
 
 # Install Composer
 RUN wget -q -O /usr/local/bin/composer https://getcomposer.org/composer.phar \
@@ -29,11 +29,8 @@ RUN wget -q -O /usr/local/bin/composer https://getcomposer.org/composer.phar \
 # Install PHP dependencies
 RUN composer install --no-dev
 
-# Copy the rest of the application files after dependencies are installed
-COPY src/ /app/
-
 # Set ownership of application files
 RUN chown -R www-data:www-data /app
 
 # Use JSON array syntax for CMD to prevent issues with signal handling
-CMD ["sh", "/app/docker/startup.sh"]
+CMD ["sh", "/app/src/docker/startup.sh"]

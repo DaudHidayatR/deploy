@@ -27,7 +27,7 @@ RUN wget -q -O /usr/local/bin/composer https://getcomposer.org/composer.phar \
     && chmod +x /usr/local/bin/composer
 
 # Install PHP dependencies
-RUN composer install --no-dev
+RUN composer update --no-dev
 
 # Set ownership of application files
 RUN chown -R www-data:www-data /app
